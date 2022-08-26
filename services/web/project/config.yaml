@@ -1,0 +1,67 @@
+################################################################################
+#
+# Global Configs:
+#
+################################################################################
+project_name:
+
+
+
+################################################################################
+#
+# Pipeline Flags:
+#
+################################################################################
+runFLAGS:
+    runETL: false
+    runDATA_QUALITY: false
+    runPREPROCESSING: false
+    runEDA: false
+    runFEATURE_ENGINEERING: true
+    runMODEL_TRAINING: true
+    runMODEL_SCORING: true
+    runPOST_SCORING_ENGINEERING: false
+    runCREATE_VIZ: false
+
+
+################################################################################
+#
+# Local Configs:
+#
+################################################################################
+
+output_fp: ./run
+
+etl_config:
+    url:
+
+data_quality_config:
+    data_fp:
+    
+preprocessing_config:
+    data_fp: 
+    zip_data_fp:
+    map_fp: 211_map.csv
+    filter_time: 201907
+
+eda_config:
+    data_fp:
+    
+feature_engineering_config:
+    data_fp:
+    
+model_training_config:
+    data_fp: 
+    test_size: 4
+
+model_scoring_config:
+    data_fp:
+    forecast_start:
+    forecast_size:
+
+post_scoring_engineering_config:
+    data_fp:
+    
+create_viz_config:
+    data_fp:
+    
