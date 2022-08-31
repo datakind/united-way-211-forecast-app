@@ -11,15 +11,16 @@ class Preprocessing(preprocessing):
         self.years = os.listdir(self.raw_211_fp)
         
     def preprocessing(self, zip_file=None, map_fp=None, filter_time=None):
-        global logger
-        logger=self._logger()
+        # global logger
+        # logger=self._logger()
         data_211 = merge_211_files(self.raw_211_fp, 
                                    self.years, 
                                    zip_file=zip_file)
         data_211 = map_211_service_category(data_211, map_fp, verbose=True)
         data_211 = create_211_volume(data_211, zip_agg=False)
         if filter_time:
-            logger.info(f'Filter times priot to {filter_time}')
+            # logger.info(f'Filter times priot to {filter_time}')
+            print(f'Filter times priot to {filter_time}')
             data_211 = data_211.loc[(data_211['year'].astype(str) +
                                      data_211['month'].astype(str)
                                      .apply(lambda x: 
@@ -59,22 +60,26 @@ def merge_211_files(path: str, years: list, zip_file: str = None):
         try: 
             assert os.path.isdir(path) 
         except AssertionError:
-            logger.info(f'{path} is not a directory')
+            # logger.info(f'{path} is not a directory')
+            print(f'{path} is not a directory')
             raise
         try: 
             assert os.path.isfile(f'{path}/{year}/time_{year}.xls') 
         except AssertionError:
-            logger.info(f'time file for year {year} not found')
+            # logger.info(f'time file for year {year} not found')
+            print(f'time file for year {year} not found')
             raise
         try: 
             assert os.path.isfile(f'{path}/{year}/date_{year}.xls') 
         except AssertionError:
-            logger.info(f'date file for year {year} not found')
+            # logger.info(f'date file for year {year} not found')
+            print(f'date file for year {year} not found')
             raise
         try: 
             assert os.path.isfile(f'{path}/{year}/service_{year}.xls') 
         except AssertionError:
-            logger.info(f'service file for year {year} not found')
+            # logger.info(f'service file for year {year} not found')
+            print(f'service file for year {year} not found')
             raise
 
         # time file
@@ -112,7 +117,8 @@ def merge_211_files(path: str, years: list, zip_file: str = None):
         try:
             assert os.path.isfile(f'{zip_file}')  
         except AssertionError:
-            logger.info(f'zip code file not found')
+            # logger.info(f'zip code file not found')
+            print(f'zip code file not found')
             raise
 
         zip_211 = pd.read_csv(f"{zip_file}")
@@ -140,7 +146,8 @@ def map_211_service_category(data_frame_211: pd.DataFrame, map_file_path: str, v
     try:
         assert os.path.isfile(f"{map_file_path}")  
     except AssertionError:
-        logger.info('Map File Not Found, check file name and path')
+        # logger.info('Map File Not Found, check file name and path')
+        print('Map File Not Found, check file name and path')
         raise
 
     tax_211 = pd.read_csv(f"{map_file_path}")\
@@ -154,7 +161,8 @@ def map_211_service_category(data_frame_211: pd.DataFrame, map_file_path: str, v
 
     if verbose:
         map_percent = data_frame_211.loc[data_frame_211['Referred Services'].notna(), 'Referred Services Category'].notna().mean()
-        logger.info(f"{map_percent:.2%} of Referred Services map to high-level service category")
+        # logger.info(f"{map_percent:.2%} of Referred Services map to high-level service category")
+        print(f"{map_percent:.2%} of Referred Services map to high-level service category")
 
     return data_frame_211
 

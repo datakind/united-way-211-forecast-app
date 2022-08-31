@@ -1,16 +1,24 @@
 import os
 import yaml
 from flask import Flask, request, render_template, redirect, url_for
-from flask import send_from_directory, Response, flash
+from flask import send_from_directory, Response, flash, session, request, copy_current_request_context
+from flask_socketio import SocketIO, emit, disconnect
+from flask_session import Session
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from time import sleep
-from loguru import logger
+import subprocess
+from uuid import uuid4
+
 
 # from run import run_script
 from src.run import run
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder="static/",template_folder="templates/")
+SESSION_TYPE = 'filesystem'
+app.config.from_object(__name__)
+socketio = SocketIO(app,logger=False, engineio_logger=False)
+Session(app)
 
 app.secret_key = "secret key"
 
@@ -33,27 +41,41 @@ def index():
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
-            logger.info(file.filename)
+            # logger.info(file.filename)
             filename = secure_filename(file.filename)
             save_location = os.path.join(UPLOAD_FOLDER, filename)
             file.save(save_location)
+            print(save_location)
+    else:
+        session['number'] = str(uuid4())
+    print(session['number'])
+    return render_template('index.html', async_mode=socketio.async_mode), 200
 
-    return render_template('index.html'), 200
-
-@app.route('/run_forecast', methods=['GET','POST'])
+# @app.route('/run_forecast', methods=['GET','POST'])
+@socketio.event
 def run_forecast():
     config_fn = './src/config.yaml'
     # fp_211 = os.listdir(UPLOAD_FOLDER)
     fp_211 = './data/211/raw/'
+    tempfolderlocation = './static/tmp/'+str(session['number'])
 
     with open(config_fn, 'r') as fn:
         config = yaml.safe_load(fn)
 
     config['preprocessing_config']['data_fp'] = fp_211
     try:
-        run(config)
+        os.environ["PYTHONUNBUFFERED"] = "1"
+        with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE,shell=True,bufsize=1,universal_newlines=True) as process:
+            for linestdout in process.stdout:
+                linestdout = linestdout.rstrip()
+                try:
+                    emit('logForcast',{"loginfo": linestdout+ "<br>"})
+                except Exception as e:
+                    emit('logForcast',{"loginfo": e+ "<br>"})
+        # run(config)
     except Exception as e:
-        logger.info(e)
+        # logger.info(e)
+        session['loggerinfo'] = str(e)
 
     # forecast_fn = os.path.join(config['output_fp'], 'create_viz',
     #                            'forecast.png')
@@ -111,21 +133,25 @@ def page_not_found(e):
 def page_not_found(e):
 	return render_template("500.html"), 500
 
-# adjusted flask_logger
-def flask_logger():
-    """creates logging information"""
-    open("static/log/job.log", 'w').close()
-    with open("static/log/job.log") as log_info:
-        for i in range(1000000):
-            data = log_info.read()
-            yield data.encode()
-            sleep(1)
 
-@app.route("/log_stream", methods=["GET"])
-def stream():
-    """returns logging information"""
-    return Response(flask_logger(), mimetype="text/plain",
-                    content_type="text/event-stream")
+# Jay's ROUTES:
+
+# A disconnection socket, may or may not be used
+@socketio.event
+def disconnect_request():
+    @copy_current_request_context
+    def can_disconnect():
+        disconnect()
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response',
+         {'data': 'Disconnected!', 'count': session['receive_count']},
+         callback=can_disconnect)
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected', request.sid)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, threaded=True, static_folder="static/")
+    # app.run(host="0.0.0.0", port=5000, threaded=True, static_folder="static/")
+    app.run(host="127.0.0.1", port=5000, threaded=True)
+    socketio.run(app,host="127.0.0.1", port=5000, threaded=True)

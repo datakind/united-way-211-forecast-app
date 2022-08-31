@@ -29,17 +29,22 @@ class ModelTraining(model_training):
         train = masterdata.iloc[:n - test_size, :]
         test = masterdata.iloc[n - test_size:, :]
 
-        self._logger().info(f'Train time range: {train.index[0]} -> {train.index[-1]}')
-        self._logger().info(f'Test time range: {test.index[0]} -> {test.index[-1]}')
-
+        # self._logger().info(f'Train time range: {train.index[0]} -> {train.index[-1]}')
+        # self._logger().info(f'Test time range: {test.index[0]} -> {test.index[-1]}')
+        print(f'Train time range: {train.index[0]} -> {train.index[-1]}')
+        print(f'Test time range: {test.index[0]} -> {test.index[-1]}')
         ets_model = sm.tsa.statespace.varmax.VARMAX(train,
                                                     trend='ct')
         ets_result = ets_model.fit(disp=0)
         
-        self._logger().info(f'AIC\t\t{round(ets_result.aic,3)}')
-        self._logger().info(f'AICc\t{round(ets_result.aicc,3)}')
-        self._logger().info(f'BIC\t\t{round(ets_result.bic,3)}')
-        self._logger().info(f'SSE\t\t{round(ets_result.sse,3)}')
+        # self._logger().info(f'AIC\t\t{round(ets_result.aic,3)}')
+        # self._logger().info(f'AICc\t{round(ets_result.aicc,3)}')
+        # self._logger().info(f'BIC\t\t{round(ets_result.bic,3)}')
+        # self._logger().info(f'SSE\t\t{round(ets_result.sse,3)}')
+        print(f'AIC\t\t{round(ets_result.aic,3)}')
+        print(f'AICc\t{round(ets_result.aicc,3)}')
+        print(f'BIC\t\t{round(ets_result.bic,3)}')
+        print(f'SSE\t\t{round(ets_result.sse,3)}')
 
         ets_test_pred = ets_result.get_prediction(start=test.index[0], 
                                                   end=test.index[-1], 
@@ -50,8 +55,9 @@ class ModelTraining(model_training):
         ets_test_ci = ets_test_pred.conf_int()
         
         for c in masterdata.columns:
-            self._logger()\
-                .info(f'Test MAPE ({c})\t\t{round(mean_absolute_percentage_error(test[c], ets_test_prediction[c]),3)}')
+            # self._logger()\
+            #     .info(f'Test MAPE ({c})\t\t{round(mean_absolute_percentage_error(test[c], ets_test_prediction[c]),3)}')
+            print(f'Test MAPE ({c})\t\t{round(mean_absolute_percentage_error(test[c], ets_test_prediction[c]),3)}')
 
 
         
