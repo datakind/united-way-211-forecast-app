@@ -119,7 +119,7 @@ input[type=button] {
   margin: 0 auto;
 }
 
-/* loading css */
+/* loading bars */
 .dots-bars-4 {
   width: 40px;
   height: 20px;
@@ -163,3 +163,29 @@ input[type=button] {
 }
 
 
+/* csv css */
+
+.zui-table {
+  border: solid 1px #DDEEEE;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font: normal 13px Arial, sans-serif;
+  font-size: .78vw;
+  text-align: center
+}
+.zui-table thead th {
+  background-color: #DDEFEF;
+  border: solid 1px #DDEEEE;
+  color: #336B6B;
+  padding: 10px;
+  text-align: left;
+  text-shadow: 1px 1px 1px #fff;
+}
+.zui-table tbody td {
+  border: solid 1px #DDEEEE;
+  color: #333;
+  padding: 10px;
+  text-shadow: 1px 1px 1px #fff;
+  background-color: white;
+  font-weight: bold;
+}

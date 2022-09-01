@@ -1,7 +1,8 @@
 import os
+import shutil
 import yaml
 from flask import Flask, request, render_template, redirect, url_for
-from flask import send_from_directory, Response, flash, session, request, copy_current_request_context
+from flask import send_from_directory, Response, send_file, session, request, copy_current_request_context
 from flask_socketio import SocketIO, emit, disconnect
 from flask_session import Session
 from werkzeug.utils import secure_filename
@@ -9,7 +10,7 @@ from datetime import datetime
 from time import sleep
 import subprocess
 from uuid import uuid4
-
+import csv
 
 # from run import run_script
 from src.run import run
@@ -47,11 +48,16 @@ def index():
             file.save(save_location)
             print(save_location)
     else:
+        UPLOAD_FOLDER = os.path.join(path, 'uploads')
         session['number'] = str(uuid4())
     print(session['number'])
     return render_template('index.html', async_mode=socketio.async_mode), 200
 
-# @app.route('/run_forecast', methods=['GET','POST'])
+@socketio.event
+def killdata():
+    shutil.rmtree('./static/tmp/'+str(session['number']))
+    
+
 @socketio.event
 def run_forecast():
     config_fn = './src/config.yaml'
@@ -72,56 +78,23 @@ def run_forecast():
                     emit('logForcast',{"loginfo": linestdout+ "<br>"})
                 except Exception as e:
                     emit('logForcast',{"loginfo": e+ "<br>"})
-        # run(config)
-    except Exception as e:
-        # logger.info(e)
-        session['loggerinfo'] = str(e)
 
-    # forecast_fn = os.path.join(config['output_fp'], 'create_viz',
-    #                            'forecast.png')
-    return redirect(url_for('forecast'))
+        # getting the csv data and sending it to the client browser
+        csvlistdata = []
+        with open('./static/tmp/'+str(session['number']+"/model_scoring/predictions.csv"), encoding='utf-8') as csvf:
+                csvReader = csv.DictReader(csvf)
+                for rows in csvReader:
+                    csvlistdata.append(rows)
+        emit('showcsv',{"showcsvinfo": csvlistdata})
 
-@app.route('/show_forecast')
-def show_forecast():
-    return redirect(url_for('forecast'))
-
-@app.route('/forecast', methods=['GET', 'POST'])
-def forecast():
-    forecast_fn = os.path.join('static','tmp', 'run', 'create_viz',
+        # getting the chart picture data and sending it to the client browser
+        forecast_fn = os.path.join('static','tmp', str(session['number']), 'create_viz',
                                'forecast.png')
-    return render_template('forecast.html', forecast=forecast_fn)
-
-# @app.route('/run_model', methods=['GET','POST'])
-# def run_model():
-#     files = os.listdir(UPLOAD_FOLDER)
-#     run_script(files, UPLOAD_FOLDER)
-#
-#     return send_from_directory('run/model_scoring/', 'predictions.csv')
-#
-# @app.route('/upload', methods=['GET', 'POST'])
-# def upload():
-#     if request.method == 'POST':
-#         file = request.files['file']
-#         if file and allowed_file(file.filename):
-#             logger.info(file.filename)
-#             filename = secure_filename(file.filename)
-#             save_location = os.path.join(UPLOAD_FOLDER, filename)
-#             logger.info(save_location)
-#             file.save(save_location)
-
-#             output_file = run_script(save_location)
-#             return redirect(url_for('download'))
-
-#     return render_template('upload.html')
-
-@app.route('/download')
-def download():
-    return render_template('download.html',
-                           files=os.listdir('run/model_scoring'))
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    return send_from_directory('run/model_scoring', filename)
+        with open(forecast_fn, 'rb') as f:
+            image_data = f.read()  
+        emit('forcastphoto',{"loginfo": image_data})
+    except Exception as e:
+        emit('logForcast',{"loginfo": e+ "<br>"})
 
 # Invalid URL
 @app.errorhandler(404)

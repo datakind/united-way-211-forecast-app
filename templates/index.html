@@ -1,9 +1,10 @@
 <html>
-
 <head>
     <title>DataKind-UW Jackson County</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}" crossorigin="anonymous" defer></script>
     <!-- Favicon -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
@@ -27,121 +28,19 @@
             </form>
         </section>
         <section id="logger">
-            <h2 style="align-content: center;">Logging will appear here:</h2>
-            <div class="logging_window">
-                <div id="loadtime" style="position: relative;top: -7px;"></div>
-                <pre id="output"></pre>
+            <h2 style="text-align: center;">Logging will appear here:</h2>
+            <div class="logging_window" id="loggingwindowid">
+                <a id="loadtime" style="position: relative;top: -7px;text-align: center;display: grid;"></a>
+                <div id="csvdiv" style="text-align: center;"></div>
+                <pre id="output" style="text-align: center;"></pre>
             </div>
         </section>
-        <form method="POST" action="/show_forecast">
-            <input type="button" id="showForecast" value="Show Forecast" style="background: rgb(198, 195, 195)">
-        </form>
+        <section id="loggerphoto"></section>
     </main>
 </body>
 
 </html>
 
 
-<!-- Run forecast JS -->
 
-<script
-    type=text/javascript> $(function() { $("#showForecast").click(function (event) { $.getJSON('/show_forecast', function(data) { }); return false; }); }); </script>
 
-<!-- drag file to upload JS -->
-<script>
-    let dropArea = document.querySelector('.droparea');
-    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false)
-    })
-
-    function preventDefaults(e) {
-        e.preventDefault()
-        e.stopPropagation()
-    }
-
-    const highlight = () => dropArea.classList.add("green-border");
-
-    const unhighlight = () => dropArea.classList.remove("green-border");
-
-    ;['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false)
-    })
-
-        ;['dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, unhighlight, false)
-        })
-
-    dropArea.addEventListener("drop", handleDrop, false);
-
-    function handleDrop(e) {
-        let dt = e.dataTransfer
-        let files = dt.files
-        handleFiles(files);
-    }
-
-    function handleFiles(files) {
-        ([...files]).forEach(uploadFile)
-    }
-    async function uploadFile(file) {
-        const url = '/'
-        let formData = new FormData()
-        console.log(file);
-        formData.append("file", file);
-
-        let responseOptions = {
-            method: 'POST',
-            files: file,
-            body: formData
-        }
-        console.log(responseOptions);
-
-        await fetch(url, responseOptions)
-            .then(() => { console.log('Finished'); })
-            .catch(() => { /* Error. Inform the user */ })
-    }
-</script>
-
-<!-- Websocket JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-<script type="text/javascript" charset="utf-8">
-    var socket = io();
-    
-    $('#runForecast').click(function(event) {
-                socket.emit('run_forecast');
-                loadtimegui = document.getElementById("loadtime")
-                loadtimetext = document.createElement('p')
-                loadtimetext.innerHTML = "Preparing Realtime calculation.... (Please wait 10-20 seconds)"
-                loadtimetext.style.cssText += 'float: left;'
-                loadicon = document.createElement("div")
-                loadicon.classList.add("dots-bars-4")
-                loadicon.setAttribute("id","loadiconid")
-                loadicon.style.cssText += 'float: left;'
-                loadtimegui.appendChild(loadtimetext)
-                loadtimegui.appendChild(loadicon)
-                return false;
-            })
-
-    socket.on('logForcast', function(msg) {
-        console.log('logForcast')
-        console.log(msg.loginfo)
-        if (document.getElementsByClassName("dots-bars-3")[0] != undefined) {
-            remove(document.getElementsByClassName("dots-bars-3")[0])
-        } 
-                
-        if (typeof msg !== 'undefined') {
-            if (document.getElementById("loadtime").innerHTML != "Running Forecast ...."){
-            document.getElementById("loadtime").innerHTML = "Running Forecast ...."
-        }
-            $('#output').append(msg.loginfo)
-        }
-    })
-    $('form#emit').submit(function(event) {
-                socket.emit('my_event', {data: $('#emit_data').val()});
-                return false;
-            })
-</script>
-<style>
-
-</style>
-
-</html>
