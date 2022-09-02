@@ -15,7 +15,8 @@ class FeatureEngineering(feature_engineering):
     def feature_engineering(self):
         
         masterdata = self.masterdata
-        self._logger().info('Creating asof_yyyymm index column')
+        # self._logger().info('Creating asof_yyyymm index column')
+        print('Creating asof_yyyymm index column')
         masterdata['asof_yyyymm'] = (masterdata['year'].astype(str) +
                                      masterdata['month'].astype(str)
                                     .apply(lambda x: 

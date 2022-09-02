@@ -34,12 +34,12 @@ class init_abc(ABC):
         print("0.1")
         return "0.1"
 
-    def _logger(self):
-        # logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-        # log = logging.getLogger(__name__)
-        # return log
-        logger.add("run/job.log", format="{time} - {message}")
-        return logger
+    # def _logger(self):
+    #     # logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    #     # log = logging.getLogger(__name__)
+    #     # return log
+    #     logger.add("run/job.log", format="{time} - {message}")
+    #     return logger
 
     @abstractmethod
     def read_input(self):
