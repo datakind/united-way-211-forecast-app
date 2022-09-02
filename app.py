@@ -71,13 +71,15 @@ def run_forecast():
     config['preprocessing_config']['data_fp'] = fp_211
     try:
         os.environ["PYTHONUNBUFFERED"] = "1"
-        with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE,shell=True,bufsize=1,universal_newlines=True) as process:
+        with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=False,bufsize=1,universal_newlines=True) as process:
             for linestdout in process.stdout:
                 linestdout = linestdout.rstrip()
                 try:
                     emit('logForcast',{"loginfo": linestdout+ "<br>"})
+                    print(linestdout)
                 except Exception as e:
-                    emit('logForcast',{"loginfo": e+ "<br>"})
+                    emit('logForcast',{"loginfo": str(e)+ "<br>"})
+                    print(str(e))
 
         # getting the csv data and sending it to the client browser
         csvlistdata = []
@@ -94,7 +96,7 @@ def run_forecast():
             image_data = f.read()  
         emit('forcastphoto',{"loginfo": image_data})
     except Exception as e:
-        emit('logForcast',{"loginfo": e+ "<br>"})
+        emit('logForcast',{"loginfo": str(e)+ "<br>"})
 
 # Invalid URL
 @app.errorhandler(404)
@@ -125,6 +127,5 @@ def test_disconnect():
     print('Client disconnected', request.sid)
 
 if __name__ == "__main__":
-    # app.run(host="0.0.0.0", port=5000, threaded=True, static_folder="static/")
     app.run(host="127.0.0.1", port=5000, threaded=True)
     socketio.run(app,host="127.0.0.1", port=5000, threaded=True)
