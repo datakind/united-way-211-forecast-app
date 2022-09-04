@@ -1,7 +1,8 @@
 import os
 import shutil
 import yaml
-from flask import Flask, abort, request, render_template, redirect, url_for
+import plotly
+from flask import Flask, request, render_template, redirect, url_for
 from flask import send_from_directory, Response, send_file
 from flask import session, request, copy_current_request_context
 from flask_socketio import SocketIO, emit, disconnect
@@ -12,6 +13,7 @@ from time import sleep
 import subprocess
 from uuid import uuid4
 import csv
+import json
 
 from src.run import run
 
@@ -36,7 +38,6 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -48,10 +49,15 @@ def index():
             file.save(save_location)
             print(save_location)
     else:
-        UPLOAD_FOLDER = os.path.join(path, 'uploads')
         session['number'] = str(uuid4())
-    print(session['number'])
     return render_template('index.html', async_mode=socketio.async_mode), 200
+
+@app.route('/forecast', methods=['GET', 'POST'])
+def forecast(figs):
+    graphJSON = []
+    for fig in figs:
+        graphJSON.append(json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder))
+    return render_template('forecast.html', graphJSON=graphJSON)
 
 @socketio.event
 def killdata():
@@ -73,7 +79,7 @@ def run_forecast():
     config['preprocessing_config']['data_fp'] = fp_211
     try:
         os.environ["PYTHONUNBUFFERED"] = "1"
-        with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE, stderr=subprocess.STDOUT,shell=False,bufsize=1,universal_newlines=True) as process:
+        with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE,shell=False,bufsize=1,universal_newlines=True) as process:
             for linestdout in process.stdout:
                 linestdout = linestdout.rstrip()
                 try:
@@ -97,33 +103,13 @@ def run_forecast():
         with open(forecast_fn, 'rb') as f:
             image_data = f.read()
         emit('forcastphoto',{"loginfo": image_data})
+        redirect(url_for('forecast'), figs=process.figs)
     except Exception as e:
         emit('logForcast',{"loginfo": str(e)+ "<br>"})
 
-# Invalid URL
-@app.errorhandler(404)
-def page_not_found(e):
-	return render_template("404.html"), 404
 
-# Internal Server Error
-@app.errorhandler(500)
-def page_not_found(e):
-	return render_template("500.html"), 500
-
-
-# Jay's ROUTES:
 
 # A disconnection socket, may or may not be used
-@socketio.event
-def disconnect_request():
-    @copy_current_request_context
-    def can_disconnect():
-        disconnect()
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': 'Disconnected!', 'count': session['receive_count']},
-         callback=can_disconnect)
-
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected', request.sid)

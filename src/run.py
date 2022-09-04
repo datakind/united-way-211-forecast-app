@@ -187,8 +187,9 @@ def run(config):
 
         process = pipeline.create_viz.CreateViz(input_fp, output_fp)
         process.read_input('feature_engineering', 'model_scoring')
-        process.create_viz()
-        process.write_output()
+        # process.create_viz()
+        # process.write_output()
+        process.create_plotly_viz()
 
 
 
