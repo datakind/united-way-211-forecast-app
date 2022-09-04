@@ -1,6 +1,7 @@
 import os
 import shutil
 import yaml
+import plotly
 from flask import Flask, request, render_template, redirect, url_for
 from flask import send_from_directory, Response, send_file, session, request, copy_current_request_context
 from flask_socketio import SocketIO, emit, disconnect
@@ -11,6 +12,7 @@ from time import sleep
 import subprocess
 from uuid import uuid4
 import csv
+import json
 
 # from run import run_script
 from src.run import run
@@ -49,6 +51,13 @@ def index():
     else:
         session['number'] = str(uuid4())
     return render_template('index.html', async_mode=socketio.async_mode), 200
+
+@app.route('/forecast', methods=['GET', 'POST'])
+def forecast(figs):
+    graphJSON = []
+    for fig in figs:
+        graphJSON.append(json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder))
+    return render_template('forecast.html', graphJSON=graphJSON)
 
 @socketio.event
 def killdata():
@@ -92,8 +101,11 @@ def run_forecast():
         with open(forecast_fn, 'rb') as f:
             image_data = f.read()  
         emit('forcastphoto',{"loginfo": image_data})
+        redirect(url_for('forecast'), figs=process.figs)
     except Exception as e:
         emit('logForcast',{"loginfo": str(e)+ "<br>"})
+
+
 
 # A disconnection socket, may or may not be used
 @socketio.on('disconnect')

@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <title>DataKind-UW Forecast</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}" crossorigin="anonymous" defer></script>
+    <!-- Favicon -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
+</head>
+
+<body>
+    <div style="padding:12px 20px; justify-content:left;">
+        <img src="{{ url_for('static', filename='images/DK_LOGO_R_WHT.svg') }}" class="h-10 block w-auto" />
+    </div>
+    <div id='chart1' class='chart' ”></div>
+    <div id='chart2' class='chart' ”></div>
+    <div id='chart3' class='chart' ”></div>
+    <div id='chart4' class='chart' ”></div>
+</body>
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script type='text/javascript'>
+    var graph1 = {{ graphJSON[0] | safe}};
+    var graph2 = {{ graphJSON[1] | safe}};
+    var graph3 = {{ graphJSON[2] | safe}};
+    var graph4 = {{ graphJSON[3] | safe}};
+    Plotly.plot('chart1', graph1, {});
+    Plotly.plot('chart2', graph2, {});
+    Plotly.plot('chart3', graph3, {});
+    Plotly.plot('chart4', graph4, {});
+</script>
+
+</html>
