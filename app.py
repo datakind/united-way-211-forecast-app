@@ -1,8 +1,9 @@
 import os
 import shutil
 import yaml
-from flask import Flask, request, render_template, redirect, url_for
-from flask import send_from_directory, Response, send_file, session, request, copy_current_request_context
+from flask import Flask, abort, request, render_template, redirect, url_for
+from flask import send_from_directory, Response, send_file
+from flask import session, request, copy_current_request_context
 from flask_socketio import SocketIO, emit, disconnect
 from flask_session import Session
 from werkzeug.utils import secure_filename
@@ -12,7 +13,6 @@ import subprocess
 from uuid import uuid4
 import csv
 
-# from run import run_script
 from src.run import run
 
 app = Flask(__name__,static_folder="static/",template_folder="templates/")
@@ -56,13 +56,15 @@ def index():
 @socketio.event
 def killdata():
     shutil.rmtree('./static/tmp/'+str(session['number']))
-    
+
 
 @socketio.event
 def run_forecast():
     config_fn = './src/config.yaml'
-    # fp_211 = os.listdir(UPLOAD_FOLDER)
-    fp_211 = './data/211/raw/'
+    print(os.listdir(UPLOAD_FOLDER))
+    emit(os.listdir(UPLOAD_FOLDER))
+    fp_211 = os.listdir(UPLOAD_FOLDER)[0]
+    # fp_211 = './data/211/211_sample_data.csv'
     tempfolderlocation = './static/tmp/'+str(session['number'])
 
     with open(config_fn, 'r') as fn:
@@ -93,7 +95,7 @@ def run_forecast():
         forecast_fn = os.path.join('static','tmp', str(session['number']), 'create_viz',
                                'forecast.png')
         with open(forecast_fn, 'rb') as f:
-            image_data = f.read()  
+            image_data = f.read()
         emit('forcastphoto',{"loginfo": image_data})
     except Exception as e:
         emit('logForcast',{"loginfo": str(e)+ "<br>"})
