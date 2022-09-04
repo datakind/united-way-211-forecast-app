@@ -1,2 +1,4 @@
 .DS_Store
 .venv
+src/pipeline/__pycache__
+src/pipeline/abstract/__pycache__
