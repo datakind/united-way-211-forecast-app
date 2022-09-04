@@ -49,7 +49,7 @@ class CreateViz(create_viz):
 
         for ax, c in zip(axs, endog):
 
-            masterdata[[c]].append(pred[[c]])\
+            pd.concat([masterdata[[c]], pred[[c]]])\
                     .rename(columns={c: 'History'}).plot(c='blue', ax=ax, lw=2)
 
             pred[[c]].rename(columns={c: 'Forecast'}).plot(c='red',
