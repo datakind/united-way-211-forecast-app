@@ -15,8 +15,6 @@ from uuid import uuid4
 import csv
 import json
 
-from src.run import run
-
 app = Flask(__name__,static_folder="static/",template_folder="templates/")
 SESSION_TYPE = 'filesystem'
 app.config.from_object(__name__)
@@ -47,7 +45,6 @@ def index():
             filename = secure_filename(file.filename)
             save_location = os.path.join(UPLOAD_FOLDER, filename)
             file.save(save_location)
-            print(save_location)
     else:
         session['number'] = str(uuid4())
     return render_template('index.html', async_mode=socketio.async_mode), 200
@@ -67,16 +64,14 @@ def killdata():
 @socketio.event
 def run_forecast():
     config_fn = './src/config.yaml'
-    print(os.listdir(UPLOAD_FOLDER))
-    emit(os.listdir(UPLOAD_FOLDER))
-    fp_211 = os.listdir(UPLOAD_FOLDER)[0]
+    fp_211 = os.path.join(UPLOAD_FOLDER, os.listdir(UPLOAD_FOLDER)[0])
     # fp_211 = './data/211/211_sample_data.csv'
+
     tempfolderlocation = './static/tmp/'+str(session['number'])
 
-    with open(config_fn, 'r') as fn:
-        config = yaml.safe_load(fn)
+    if not os.path.isdir(tempfolderlocation):
+        os.mkdir(tempfolderlocation)
 
-    config['preprocessing_config']['data_fp'] = fp_211
     try:
         os.environ["PYTHONUNBUFFERED"] = "1"
         with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE,shell=False,bufsize=1,universal_newlines=True) as process:
