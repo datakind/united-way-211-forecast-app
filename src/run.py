@@ -140,7 +140,7 @@ def run(config):
                         pd.DateOffset(months=1)
 
         if not config['model_scoring_config']['forecast_size']:
-            config['model_scoring_config']['forecast_size'] = 4
+            config['model_scoring_config']['forecast_size'] = 3
 
         forecast_end = forecast_start + \
             pd.DateOffset(months=config['model_scoring_config']\
