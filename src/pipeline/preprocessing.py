@@ -14,7 +14,6 @@ class Preprocessing(preprocessing):
             self.years = None
         else:
             print("Unknow input!" )
-            raise
 
     def preprocessing(self, zip_file=None, map_fp=None, filter_time=None):
         # global logger
