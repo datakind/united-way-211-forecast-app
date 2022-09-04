@@ -141,7 +141,7 @@ def run(config):
                         pd.DateOffset(months=1)
 
         if not config['model_scoring_config']['forecast_size']:
-            config['model_scoring_config']['forecast_size'] = 4
+            config['model_scoring_config']['forecast_size'] = 3
 
         forecast_end = forecast_start + \
             pd.DateOffset(months=config['model_scoring_config']\
@@ -190,6 +190,7 @@ def run(config):
         process.read_input('feature_engineering', 'model_scoring')
         process.create_viz()
         process.write_output()
+        # process.create_plotly_viz()
 
 
 
@@ -204,5 +205,6 @@ if __name__ == '__main__':
         config = yaml.safe_load(fn)
 
     config['preprocessing_config']['data_fp'] = fp_211
+
     config['output_fp'] = tempoutput
     run(config)

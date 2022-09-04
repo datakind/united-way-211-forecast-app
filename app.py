@@ -3,7 +3,8 @@ import shutil
 import yaml
 import plotly
 from flask import Flask, request, render_template, redirect, url_for
-from flask import send_from_directory, Response, send_file, session, request, copy_current_request_context
+from flask import send_from_directory, Response, send_file
+from flask import session, request, copy_current_request_context
 from flask_socketio import SocketIO, emit, disconnect
 from flask_session import Session
 from werkzeug.utils import secure_filename
@@ -13,9 +14,6 @@ import subprocess
 from uuid import uuid4
 import csv
 import json
-
-# from run import run_script
-from src.run import run
 
 app = Flask(__name__,static_folder="static/",template_folder="templates/")
 SESSION_TYPE = 'filesystem'
@@ -47,7 +45,6 @@ def index():
             filename = secure_filename(file.filename)
             save_location = os.path.join(UPLOAD_FOLDER, filename)
             file.save(save_location)
-            print(save_location)
     else:
         session['number'] = str(uuid4())
     return render_template('index.html', async_mode=socketio.async_mode), 200
@@ -62,19 +59,19 @@ def forecast(figs):
 @socketio.event
 def killdata():
     shutil.rmtree('./static/tmp/'+str(session['number']))
-    
+
 
 @socketio.event
 def run_forecast():
     config_fn = './src/config.yaml'
-    # fp_211 = os.listdir(UPLOAD_FOLDER)
-    fp_211 = './data/211/raw/'
+    fp_211 = os.path.join(UPLOAD_FOLDER, os.listdir(UPLOAD_FOLDER)[0])
+    # fp_211 = './data/211/211_sample_data.csv'
+
     tempfolderlocation = './static/tmp/'+str(session['number'])
 
-    with open(config_fn, 'r') as fn:
-        config = yaml.safe_load(fn)
+    if not os.path.isdir(tempfolderlocation):
+        os.mkdir(tempfolderlocation)
 
-    config['preprocessing_config']['data_fp'] = fp_211
     try:
         os.environ["PYTHONUNBUFFERED"] = "1"
         with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE,shell=False,bufsize=1,universal_newlines=True) as process:
@@ -99,7 +96,7 @@ def run_forecast():
         forecast_fn = os.path.join('static','tmp', str(session['number']), 'create_viz',
                                'forecast.png')
         with open(forecast_fn, 'rb') as f:
-            image_data = f.read()  
+            image_data = f.read()
         emit('forcastphoto',{"loginfo": image_data})
         redirect(url_for('forecast'), figs=process.figs)
     except Exception as e:

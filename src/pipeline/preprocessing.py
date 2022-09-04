@@ -8,14 +8,29 @@ from .abstract.pipeline_abc import preprocessing
 class Preprocessing(preprocessing):
     def read_input(self):
         self.raw_211_fp = self.input
-        self.years = os.listdir(self.raw_211_fp)
-        
+        if os.path.isdir(self.raw_211_fp):
+            self.years = os.listdir(self.raw_211_fp)
+        elif os.path.isfile(self.raw_211_fp):
+            self.years = None
+        else:
+            print("Unknow input!" )
+
     def preprocessing(self, zip_file=None, map_fp=None, filter_time=None):
         # global logger
         # logger=self._logger()
-        data_211 = merge_211_files(self.raw_211_fp, 
-                                   self.years, 
-                                   zip_file=zip_file)
+
+        if os.path.isdir(self.raw_211_fp):
+            data_211 = merge_211_files(self.raw_211_fp,
+                                       self.years,
+                                       zip_file=zip_file)
+        elif os.path.isfile(self.raw_211_fp):
+            data_211 = pd.read_csv(self.raw_211_fp,
+                                   parse_dates=['Contact Start Date']
+                                   )
+        else:
+            print("Unknow input!" )
+            raise
+
         data_211 = map_211_service_category(data_211, map_fp, verbose=True)
         data_211 = create_211_volume(data_211, zip_agg=False)
         if filter_time:
@@ -23,16 +38,16 @@ class Preprocessing(preprocessing):
             print(f'Filter times priot to {filter_time}')
             data_211 = data_211.loc[(data_211['year'].astype(str) +
                                      data_211['month'].astype(str)
-                                     .apply(lambda x: 
+                                     .apply(lambda x:
                         f'{datetime.datetime.strptime(x, "%B").month:02}'))\
                         .astype(int) >= filter_time, :]
-        
+
         self.data_211 = data_211
-        
-        
+
+
     def write_output(self):
         self.data_211.to_csv(self.output, index=False)
-    
+
 
 def merge_211_files(path: str, years: list, zip_file: str = None):
 
@@ -44,7 +59,7 @@ def merge_211_files(path: str, years: list, zip_file: str = None):
     :param self: reference to current class instant.
     :param path: full or relative path to time, date and service files.
     :param years: years for which 211 data needs to be merged.
-    :param zipcode: (optional) if provided, adds zip code to 211 call data 
+    :param zipcode: (optional) if provided, adds zip code to 211 call data
 
     :returns: data_frame_211, a pandas dataframe with transaction id, contact
     start time and date and referred service
@@ -57,26 +72,26 @@ def merge_211_files(path: str, years: list, zip_file: str = None):
     for year in years:
 
 
-        try: 
-            assert os.path.isdir(path) 
+        try:
+            assert os.path.isdir(path)
         except AssertionError:
             # logger.info(f'{path} is not a directory')
             print(f'{path} is not a directory')
             raise
-        try: 
-            assert os.path.isfile(f'{path}/{year}/time_{year}.xls') 
+        try:
+            assert os.path.isfile(f'{path}/{year}/time_{year}.xls')
         except AssertionError:
             # logger.info(f'time file for year {year} not found')
             print(f'time file for year {year} not found')
             raise
-        try: 
-            assert os.path.isfile(f'{path}/{year}/date_{year}.xls') 
+        try:
+            assert os.path.isfile(f'{path}/{year}/date_{year}.xls')
         except AssertionError:
             # logger.info(f'date file for year {year} not found')
             print(f'date file for year {year} not found')
             raise
-        try: 
-            assert os.path.isfile(f'{path}/{year}/service_{year}.xls') 
+        try:
+            assert os.path.isfile(f'{path}/{year}/service_{year}.xls')
         except AssertionError:
             # logger.info(f'service file for year {year} not found')
             print(f'service file for year {year} not found')
@@ -99,7 +114,7 @@ def merge_211_files(path: str, years: list, zip_file: str = None):
         service_file['count'] = service_file.groupby('Transaction ID')['Transaction ID'].transform('count')
 
         # drop NA service if other service is associated with Transaction ID
-        service_file = service_file.loc[~((service_file['count'] > 1) & service_file['Referred Services'].isna()) 
+        service_file = service_file.loc[~((service_file['count'] > 1) & service_file['Referred Services'].isna())
                      & service_file['Transaction ID'].notna(),
                      ['Transaction ID', 'Referred Services']]
 
@@ -115,7 +130,7 @@ def merge_211_files(path: str, years: list, zip_file: str = None):
     if zip_file is not None: # if zip code file provided, add zip code column
 
         try:
-            assert os.path.isfile(f'{zip_file}')  
+            assert os.path.isfile(f'{zip_file}')
         except AssertionError:
             # logger.info(f'zip code file not found')
             print(f'zip code file not found')
@@ -144,7 +159,7 @@ def map_211_service_category(data_frame_211: pd.DataFrame, map_file_path: str, v
 
     """
     try:
-        assert os.path.isfile(f"{map_file_path}")  
+        assert os.path.isfile(f"{map_file_path}")
     except AssertionError:
         # logger.info('Map File Not Found, check file name and path')
         print('Map File Not Found, check file name and path')
@@ -176,8 +191,8 @@ def create_211_volume(data_frame_211, zip_agg=True):
     :param data_frame_211: data frame of 211 calls with 'Contact Start Date', 'Referred Service' columns
     :param zip_agg: if True (defualt) aggregate 211 call volume using 'zip' column
 
-    :returns: volume_211: Monthly 211 call volume aggregated by county or zip level.  One column for each of 
-    housing, utility service, food assistance and total calls.  
+    :returns: volume_211: Monthly 211 call volume aggregated by county or zip level.  One column for each of
+    housing, utility service, food assistance and total calls.
 
     """
 
@@ -208,4 +223,3 @@ def create_211_volume(data_frame_211, zip_agg=True):
     volume_211 = volume_211.reset_index()
 
     return volume_211
-
