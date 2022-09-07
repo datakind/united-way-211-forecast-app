@@ -59,7 +59,7 @@ def forecast(figs):
 # A Websocket to remove that tmp and upload folder after the prediction is finished.
 @socketio.event
 def killdata():
-    # shutil.rmtree('./static/tmp/'+str(session['number']))
+    shutil.rmtree('./static/tmp/'+str(session['number']))
     shutil.rmtree('./upload/'+str(session['number']))
 
 # The websocket that starts the run.py prediction model
@@ -96,8 +96,7 @@ def run_forecast():
             os.environ["PYTHONUNBUFFERED"] = "1"
             emit('clearoutput')
             # starting realtime pipe to websocket
-            with subprocess.Popen([".venv/scripts/python.exe","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE,shell=False,bufsize=1,universal_newlines=True) as process:
-            # with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE,shell=False,bufsize=1,universal_newlines=True) as process:
+            with subprocess.Popen(["python","run.py","--211",fp_211,"--config_yaml",config_fn,"--tempsource",tempfolderlocation],stdout=subprocess.PIPE,shell=False,bufsize=1,universal_newlines=True) as process:
                 for linestdout in process.stdout:
                     linestdout = linestdout.rstrip()
                     try:
