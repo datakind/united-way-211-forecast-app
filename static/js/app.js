@@ -216,6 +216,7 @@
         loggerphoto = document.createElement("img")
         loggerphoto.setAttribute("src",'data:image/png;base64,'+encode(bytes))
         loggerphoto.setAttribute("alt","Forecast result")
+        loggerphoto.style.cssText += "margin-left: auto;margin-right: auto;"
         loggerphotocontainer.appendChild(loggerphoto)
         loadtimeid = document.getElementById("loadtime")
         loadtimeid.innerHTML = "CHART DATA BELOW - CLICK HERE TO DOWNLOAD"

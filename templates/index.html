@@ -12,12 +12,12 @@
 </head>
 
 <body id="main">
-    <div style="padding:12px 20px; justify-content:left;">
-        <img src="{{ url_for('static', filename='images/DK_LOGO_R_WHT.svg') }}" class="h-10 block w-auto" />
-    </div>
+    
     <main>
         <section class="droparea" id="droparea">
-            <i class="far fa-images" style="justify-content: center;">
+            <div style="padding:12px 20px; justify-content:left;">
+                <img src="{{ url_for('static', filename='images/DK_LOGO_R_WHT.svg') }}" class="h-10 block w-auto" />
+            </div>
             <form class="my-form">
                 <p class="largetext" style="justify-content: left;">Drag and Drop CSV files here</p>
                 <input type="file" id="fileElem" name="files" multiple accept="csv/*" autocomplete="off"
@@ -37,7 +37,7 @@
             <div id="csvdiv" style="text-align: center;"></div>
             
         </section>
-        <section id="loggerphoto"></section>
+        <section id="loggerphoto" style="display: grid;"></section>
     </main>
 </body>
 
