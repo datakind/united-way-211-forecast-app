@@ -59,7 +59,7 @@ def forecast(figs):
 # A Websocket to remove that tmp and upload folder after the prediction is finished.
 @socketio.event
 def killdata():
-    # shutil.rmtree('./static/tmp/'+str(session['number']))
+    shutil.rmtree('./static/tmp/'+str(session['number']))
     shutil.rmtree('./upload/'+str(session['number']))
 
 # The websocket that starts the run.py prediction model
