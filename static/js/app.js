@@ -1,3 +1,4 @@
+    // A Function that helps convert image data that is in memory
     function encode (input) {
     var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     var output = "";
@@ -25,6 +26,7 @@
     return output;
 }
 
+// Drag and drop code that is use to allow drag and drop
     let dropArea = document.querySelector('.droparea');
     ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false)
@@ -54,6 +56,7 @@
         handleFiles(files);
     }
 
+    // A function that handles the uploading of the file
     function handleFiles(files) {
         ([...files]).forEach(uploadFile)
     }
@@ -75,6 +78,7 @@
             .catch(() => { /* Error. Inform the user */ })
     }
 
+    // A function that converts a nested object array into csv for downloading
     function ConvertToCSV(objArray,csvheader) {
             var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
             var str = '';
@@ -101,11 +105,19 @@
             return str;
         }
 
+    // Websocket initialization
     var socket = io();
-    
+
+    // runForecase websocket code
     $('#runForecast').click(function(event) {
                 socket.emit('run_forecast');
                 loadtimegui = document.getElementById("loadtime")
+                loggerphotoid = document.getElementById("loggerphoto")
+                loggerphotoid.innerHTML = ""
+                csvdivid = document.getElementById("csvdiv")
+                csvdivid.innerHTML = ""
+                csvtimeid = document.getElementById("csvtime")
+                csvtimeid.innerHTML = ""
                 loadtimetext = document.createElement('p')
                 loadtimetext.innerHTML = "Preparing Realtime calculation.... (Please wait 10-20 seconds)"
                 loadtimetext.style.cssText += 'float: left;'
@@ -118,23 +130,25 @@
                 return false;
             })
 
+    // Websocket to show csv data on screen
     socket.on('showcsv', function(msg) {
         console.log(msg.showcsvinfo)
         csvdata = msg.showcsvinfo
         csvheader  = Object.keys(csvdata[0])
 
         jsonObject = JSON.stringify(csvdata);
-        loadtimeid = document.getElementById("csvdiv")
+        loadtimeid = document.getElementById("csvtime")
+        loadtimeid.innerHTML = ""
         csvdownloadlink = document.createElement("a")
         csvdownloadlink.innerHTML = "Download CSV File"
         csvContent = "data:text/csv;charset=utf-8," + ConvertToCSV(jsonObject,csvheader)
-        // csvContent = "data:text/csv;charset=utf-8," + csvdata.map(e => e.join(",")).join("\n");
         encodedUri = encodeURI(csvContent);
         csvdownloadlink.setAttribute("href", encodedUri);
         csvdownloadlink.setAttribute("download", "predictions.csv");
         loadtimeid.append(csvdownloadlink)
 
         loggerphotocontainer = document.getElementById("loggerphoto")
+        loggerphotocontainer.innerHTML = ""
         csvtable = document.createElement("table")
         csvheaderthread = document.createElement("thead")
         csvheadertr = document.createElement("tr")
@@ -165,30 +179,44 @@
             
 
         }
-    })
-    socket.on('logForcast', function(msg) {
-        console.log('logForcast')
-        console.log(msg.loginfo)
-        if (document.getElementsByClassName("dots-bars-3")[0] != undefined) {
-            remove(document.getElementsByClassName("dots-bars-3")[0])
-        } 
-                
-        if (typeof msg !== 'undefined') {
-            if (document.getElementById("loadtime").innerHTML != "Running Forecast ...."){
-            document.getElementById("loadtime").innerHTML = "Running Forecast ...."
-        }
+    }),
+
+    // A websocket for different error catches
+    socket.on('logerror', function(msg){
+        if (String(msg.errormessage) == "File Missing"){
+            document.getElementById("loadtime").innerHTML = ""
+            document.getElementById("output").innerHTML = ""
+            $('#output').append(msg.loginfo)
+        } else {
             $('#output').append(msg.loginfo)
         }
     })
+
+    // A websocket to clear output of the logger on screen
+    socket.on('clearoutput', function(msg) {
+        document.getElementById("output").innerHTML = ""
+    })
+
+    // The websocket that pipes the runtime interpreter to the screen
+    socket.on('logForcast', function(msg) {
+        console.log('logForcast')
+        console.log(msg.loginfo)
+        $('#output').append(msg.loginfo)
+        }
+    )
+
+    // A websocket to start the photo and show it on screen
     socket.on('forcastphoto', function(msg) {
         console.log("forcast test")
         console.log(msg.loginfo)
         var arrayBuffer = msg.loginfo;
         var bytes = new Uint8Array(arrayBuffer);
         loggerphotocontainer = document.getElementById("loggerphoto")
+        
         loggerphoto = document.createElement("img")
         loggerphoto.setAttribute("src",'data:image/png;base64,'+encode(bytes))
         loggerphoto.setAttribute("alt","Forecast result")
+        loggerphoto.style.cssText += "margin-left: auto;margin-right: auto;"
         loggerphotocontainer.appendChild(loggerphoto)
         loadtimeid = document.getElementById("loadtime")
         loadtimeid.innerHTML = "CHART DATA BELOW - CLICK HERE TO DOWNLOAD"
@@ -197,7 +225,3 @@
         socket.emit('killdata');
 
     })
-    $('form#emit').submit(function(event) {
-                socket.emit('my_event', {data: $('#emit_data').val()});
-                return false;
-            })
