@@ -20,7 +20,7 @@
             <i class="far fa-images" style="justify-content: center;">
             <form class="my-form">
                 <p class="largetext" style="justify-content: left;">Drag and Drop CSV files here</p>
-                <input type="file" id="fileElem" name="files" multiple accept="csv/*"
+                <input type="file" id="fileElem" name="files" multiple accept="csv/*" autocomplete="off"
                     onchange="handleFiles(this.files)" style="background: rgb(149 149 149)">
             </form>
             <form method="POST" action="/run_forecast">
@@ -31,9 +31,11 @@
             <h2 style="text-align: center;">Logging will appear here:</h2>
             <div class="logging_window" id="loggingwindowid">
                 <a id="loadtime" style="position: relative;top: -7px;text-align: center;display: grid;"></a>
-                <div id="csvdiv" style="text-align: center;"></div>
+                <a id="csvtime" style="position: relative;top: -7px;text-align: center;display: grid;"></a>
                 <pre id="output" style="text-align: center;"></pre>
             </div>
+            <div id="csvdiv" style="text-align: center;"></div>
+            
         </section>
         <section id="loggerphoto"></section>
     </main>
