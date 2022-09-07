@@ -26,3 +26,11 @@ Step 2
 docker build . -t uwwapp
 docker run -p 5000:5000 -t uwwapp
 ```
+
+Step 3
+
+Go your browser and type:
+
+```
+http://localhost:5000
+```
