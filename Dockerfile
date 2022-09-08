@@ -1,4 +1,4 @@
-FROM --platform=linux/arm64/v8 python:3.9.13-slim-buster
+FROM python:3.9.13-slim-buster
 
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -11,4 +11,10 @@ RUN apt-get update && pip install --upgrade pip && pip install -r requirements.t
 
 COPY . /app
 
-CMD ["gunicorn", "wsgi:app", "--bind=0.0.0.0:5000"]
+CMD ["python","app.py"]
+# We are only doing this for now for the presentation
+# Afterwards, gunicorn will be used again after testing.
+# Gunicorn seems to work with websockets as long as
+# the platform build lines up. If you are using CI with 
+# Heroku, this may not be possible, so Gevent MUST be used
+# or a thread handler process.
