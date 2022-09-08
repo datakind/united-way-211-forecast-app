@@ -76,7 +76,7 @@ header {
   flex-direction: column;
   font-size: 12px;
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  width: 384px;
+  width: auto;
   max-width: 100%;
   height: auto;
   background-color: #ffffff;
@@ -84,11 +84,21 @@ header {
   padding-bottom: 12px !important;
 
 }
+.droparea {
+  width: 384px !important;
+
+}
 
 #logger {
   margin-top: 24px !important;
   padding-top: 24px !important;
   padding-bottom: 24px !important;
+}
+
+img, table {
+  margin: 24px !important;
+  overflow-x: scroll;
+  max-width: 100%;
 }
 
 .formfields {
