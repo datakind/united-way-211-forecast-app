@@ -14,12 +14,6 @@
   margin: auto;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 html {
   font-size: 12px;
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -40,7 +34,7 @@ body {
 h2 {
   font-size: 16px;
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-weight: lighter;
+  font-weight: normal;
 }
 p {
   font-size: 13px;
@@ -87,10 +81,16 @@ header {
   height: auto;
   background-color: #ffffff;
   border-radius: 15px;
+  padding-bottom: 12px !important;
+
 }
 
 #logger {
   margin-top: 24px !important;
+}
+
+.formfields {
+  padding-left: 12px !important;
 }
 
 .droparea i {
@@ -122,8 +122,21 @@ input[type=file]:focus {
 
 input[type=button] {
   padding:5px 15px;
-  background:#ccc;
-  border:0 none;
+  background: #ffffff;
+  color: #009999;
+  border: solid #009999;
+  cursor:pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+input[type=button]:hover {
+  padding:5px 15px;
+  background: #009999;
+  color: #ffffff;
+  border: solid #ffffff;
   cursor:pointer;
   -webkit-border-radius: 5px;
   border-radius: 5px;
