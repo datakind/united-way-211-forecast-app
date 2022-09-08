@@ -87,10 +87,12 @@ header {
 
 #logger {
   margin-top: 24px !important;
+  padding-top: 24px !important;
+  padding-bottom: 24px !important;
 }
 
 .formfields {
-  padding-left: 12px !important;
+  padding-left: 24px !important;
 }
 
 .droparea i {
@@ -114,6 +116,8 @@ input[type=file] {
   border:2px solid #ccc;
   -webkit-border-radius: 5px;
   border-radius: 5px;
+  background: #ffffff !important;
+
 }
 
 input[type=file]:focus {
@@ -122,7 +126,7 @@ input[type=file]:focus {
 
 input[type=button] {
   padding:5px 15px;
-  background: #ffffff;
+  background: #ffffff !important;
   color: #009999;
   border: solid #009999;
   cursor:pointer;
@@ -134,9 +138,9 @@ input[type=button] {
 
 input[type=button]:hover {
   padding:5px 15px;
-  background: #009999;
+  background: #009999 !important;
   color: #ffffff;
-  border: solid #ffffff;
+  border: solid #009999;
   cursor:pointer;
   -webkit-border-radius: 5px;
   border-radius: 5px;
