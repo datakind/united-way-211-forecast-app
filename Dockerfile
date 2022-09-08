@@ -1,4 +1,4 @@
-FROM python:3.9.13-slim-buster
+FROM --platform=linux/arm64/v8 python:3.9.13-slim-buster
 
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1

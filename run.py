@@ -1,3 +1,4 @@
+import json
 import os
 import yaml
 import argparse
@@ -160,7 +161,7 @@ def run(config):
         if config['post_scoring_engineering_config']['data_fp']:
             input_fp = config['post_scoring_engineering_config']['data_fp']
         else:
-            input_fp = s.path.join(config['output_fp'],
+            input_fp = os.path.join(config['output_fp'],
                                    'model_scoring', 'predictions.csv')
         output_fp = os.path.join(config['output_fp'],
                                  'post_scoring_engineering')
@@ -183,14 +184,36 @@ def run(config):
         output_fp = os.path.join(config['output_fp'],
                                  'create_viz')
         pathlib.Path(output_fp).mkdir(parents=True, exist_ok=True)
+        output_figs = os.path.join(output_fp, 'figs.json')
         output_fp = os.path.join(output_fp, 'forecast.png')
+        
 
 
         process = pipeline.create_viz.CreateViz(input_fp, output_fp)
         process.read_input('feature_engineering', 'model_scoring')
         process.create_viz()
         process.write_output()
-        # process.create_plotly_viz()
+    
+        figsdata = process.create_plotly_viz()
+
+        # Option 1
+        # The simple act of printing the figs will output it to the screen
+        # If you want, you can make an if statement to look out for "FIGDATAINFO--"
+        # around line 104 in app.py. That will allow you to pipe the string from the 
+        # websocket into the forecast endpoint
+        # print(type(figsdata))
+
+        # Option 2
+        # You could dump the data to a json file, then you can
+        # get the data back around line 119 in app.py, then add your code to the 
+        # exisiting template using a new websocket or redirect to the forecast
+        # endpoint then map the data to the existing template.
+        # I say existing(not forecast.html but use index.html) because the
+        # json file will be deleted once the killdata websocket gets triggered
+        # from the app.js file
+        # figsdata_str = str(figsdata)
+        # with open(output_figs, "w") as json_file: 
+        #     json.dump(figsdata_str,json_file)
 
 
 

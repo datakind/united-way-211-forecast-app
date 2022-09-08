@@ -120,3 +120,4 @@ class CreateViz(create_viz):
             figs.append(fig)
 
         self.fig = figs
+        return figs
