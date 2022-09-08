@@ -98,6 +98,11 @@ img, table, #loggerphoto {
   overflow-x: scroll;
 }
 
+.zui-table {
+  max-width: 1200px !important;
+  overflow-x: scroll;
+}
+
 .formfields {
   padding-left: 24px !important;
 }
@@ -107,6 +112,10 @@ img, table, #loggerphoto {
   flex-grow: 1;
   padding-top: 1rem;
   max-width: 600px !important;
+}
+
+.droparea {
+  width: 600px !important;
 }
 
 .green-border {
