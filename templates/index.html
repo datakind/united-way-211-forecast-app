@@ -16,16 +16,18 @@
     <main>
         <section class="droparea" id="droparea">
             <div style="padding:12px 20px; justify-content:left;">
-                <img src="{{ url_for('static', filename='images/DK_LOGO_R_WHT.svg') }}" class="h-10 block w-auto" />
+                <img src="{{ url_for('static', filename='images/DK_LOGO_R_WHT.svg') }}" />
             </div>
-            <form class="my-form">
-                <p class="largetext" style="justify-content: left;">Drag and Drop CSV files here</p>
-                <input type="file" id="fileElem" name="files" multiple accept="csv/*" autocomplete="off"
-                    onchange="handleFiles(this.files)" style="background: rgb(149 149 149)">
-            </form>
-            <form method="POST" action="/run_forecast">
-                <input type="button" id="runForecast" value="Forecast Demand" style="background: rgb(194, 189, 189);")">
-            </form>
+            <div class="formfields">
+                <form class="my-form">
+                    <p class="largetext" style="justify-content: left;">Drag and Drop CSV files here</p>
+                    <input type="file" id="fileElem" name="files" multiple accept="csv/*" autocomplete="off"
+                        onchange="handleFiles(this.files)" style="background: rgb(149 149 149)">
+                </form>
+                <form method="POST" action="/run_forecast">
+                    <input type="button" id="runForecast" value="Forecast Demand" style="background: rgb(194, 189, 189);")">
+                </form>
+            </div>
         </section>
         <section id="logger">
             <h2 style="text-align: center;">Logging will appear here:</h2>
