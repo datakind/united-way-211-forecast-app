@@ -4,7 +4,7 @@
   padding: 20.5px;
   font-size: 13px;
   line-height: 1.42857143;
-  color: #ffffff;
+  color: #606060;
   word-break: break-all;
   word-wrap: break-word;
   background-color: #f79112;
@@ -12,6 +12,8 @@
   border-radius: 4px;
   width: 100%;
   margin: auto;
+  padding-top: 4px;
+
 }
 
 * {
@@ -23,7 +25,7 @@
 html {
   font-size: 12px;
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  color: #ffffff;
+  color: #606060;
   line-height: 1rem;
 }
 
@@ -35,6 +37,7 @@ body {
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   justify-content: center;
   align-items: flex-start;
+  padding-top: 24px;
 }
 
 h2 {
@@ -63,12 +66,19 @@ main {
   display:inline-block;
 }
 
+#form {
+  padding-top: 6px;
+}
+
+#input {
+  padding-top: 4px;
+}
+
 header {
   margin-top: 1rem;
 }
 
-.droparea, .logger {
-  margin-top: 24px;
+.droparea, #logger {
   margin-left: auto;
   margin-right: auto;
   display: flex;
@@ -80,7 +90,7 @@ header {
   width: 384px;
   max-width: 100%;
   height: 160px;
-  background-color: #e37425;
+  background-color: #ffffff;
   border-radius: 15px;
 }
 
