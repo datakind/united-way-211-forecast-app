@@ -12,5 +12,3 @@ RUN apt-get update && pip install --upgrade pip && pip install -r requirements.t
 COPY . /app
 
 CMD ["gunicorn", "wsgi:app", "--bind=0.0.0.0:5000"]
-
-# export DOCKER_DEFAULT_PLATFORM=linux/amd64
