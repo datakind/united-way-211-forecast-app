@@ -75,7 +75,7 @@ header {
   margin-top: 1rem;
 }
 
-.droparea, #logger {
+.formfields, #logger {
   margin-left: auto;
   margin-right: auto;
   display: flex;
