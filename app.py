@@ -44,6 +44,7 @@ def index():
             filename = secure_filename(file.filename)
             save_location = os.path.join(UPLOAD_FOLDER, filename)
             file.save(save_location)
+            socketio.emit('uploadcomplete')
     else:
         session['number'] = str(uuid4())
     return render_template('index.html', async_mode=socketio.async_mode), 200

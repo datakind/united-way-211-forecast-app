@@ -58,7 +58,24 @@
 
     // A function that handles the uploading of the file
     function handleFiles(files) {
-        ([...files]).forEach(uploadFile)
+        loadtimegui = document.getElementById("loadtime")
+        loggerphotoid = document.getElementById("loggerphoto")
+        loggerphotoid.innerHTML = ""
+        csvdivid = document.getElementById("csvdiv")
+        csvdivid.innerHTML = ""
+        csvtimeid = document.getElementById("csvtime")
+        csvtimeid.innerHTML = ""
+        loadtimetext = document.createElement('p')
+        loadtimetext.innerHTML = "Uploading csv file... (Please wait 10-20 seconds)"
+        loadtimetext.style.cssText += 'float: left;'
+        loadicon = document.createElement("div")
+        loadicon.classList.add("dots-bars-4")
+        loadicon.setAttribute("id","loadiconid")
+        loadicon.style.cssText += 'float: left;'
+        loadtimegui.appendChild(loadtimetext)
+        loadtimegui.appendChild(loadicon);
+        {
+        ([...files]).forEach(uploadFile)}
     }
     async function uploadFile(file) {
         const url = '/'
@@ -223,5 +240,22 @@
         loadtimeid.href = 'data:image/png;base64,'+encode(bytes)
         loadtimeid.download = 'chartdata.png';
         socket.emit('killdata');
+
+    })
+
+    // A websocket to let the user know the upload is completed
+    socket.on('uploadcomplete', function(msg) {
+        console.log('upload is complete')
+        document.getElementById("loadtime").innerHTML = "" 
+        loggerphotoid = document.getElementById("loggerphoto")
+        loggerphotoid.innerHTML = ""
+        csvdivid = document.getElementById("csvdiv")
+        csvdivid.innerHTML = ""
+        csvtimeid = document.getElementById("csvtime")
+        csvtimeid.innerHTML = ""
+        loadtimetext = document.createElement('p')
+        loadtimetext.innerHTML = "CSV upload completed"
+        loadtimetext.style.cssText += 'float: left;'
+        loadtimegui.appendChild(loadtimetext)
 
     })
