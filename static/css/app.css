@@ -1,29 +1,23 @@
 .logging_window {
   display: block;
   flex-direction: column; 
-  padding: 20.5px;
+  padding: 20.5px !important;
   font-size: 13px;
   line-height: 1.42857143;
-  color: #ffffff;
+  color: #606060;
   word-break: break-all;
   word-wrap: break-word;
-  background-color: #f79112;
+  background-color: ##c2bdbc;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 100%;
+  width: auto;
   margin: auto;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 html {
   font-size: 12px;
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  color: #ffffff;
+  color: #606060;
   line-height: 1rem;
 }
 
@@ -38,9 +32,9 @@ body {
 }
 
 h2 {
-  font-size: 20px;
+  font-size: 16px;
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  line-height: 1.42857143;
+  font-weight: normal;
 }
 p {
   font-size: 13px;
@@ -61,33 +55,68 @@ main {
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   flex-direction: column;
   display:inline-block;
+  overflow-x: scroll;
+}
+
+#form {
+  padding-top: 6px !important;
+}
+
+#input {
+  padding-top: 4px !important;
 }
 
 header {
   margin-top: 1rem;
 }
 
-.droparea, .logger {
-  margin-top: 24px;
+.formfields, #logger {
   margin-left: auto;
   margin-right: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   font-size: 12px;
   font-family: Helvetica Neue, Helvetica, Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  width: 384px;
   max-width: 100%;
-  height: 160px;
-  background-color: #e37425;
+  height: auto;
+  background-color: #ffffff;
   border-radius: 15px;
+  padding-bottom: 12px !important;
+  overflow-x: scroll;
+}
+
+#logger {
+  margin-top: 24px !important;
+  padding-top: 24px !important;
+  padding-bottom: 24px !important;
+  width: 600px;
+}
+
+img, table, #loggerphoto {
+  margin: 24px !important;
+  max-width: 1200px !important;
+  overflow-x: scroll;
+}
+
+.zui-table {
+  max-width: 1200px !important;
+  overflow-x: scroll;
+}
+
+.formfields {
+  padding-left: 24px !important;
 }
 
 .droparea i {
   font-size: 3rem;
   flex-grow: 1;
   padding-top: 1rem;
+  max-width: 600px !important;
+}
+
+.droparea {
+  width: 600px !important;
+  margin: auto;
 }
 
 .green-border {
@@ -105,6 +134,8 @@ input[type=file] {
   border:2px solid #ccc;
   -webkit-border-radius: 5px;
   border-radius: 5px;
+  background: #ffffff !important;
+
 }
 
 input[type=file]:focus {
@@ -113,8 +144,21 @@ input[type=file]:focus {
 
 input[type=button] {
   padding:5px 15px;
-  background:#ccc;
-  border:0 none;
+  background: #ffffff !important;
+  color: #009999;
+  border: solid #009999;
+  cursor:pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+input[type=button]:hover {
+  padding:5px 15px;
+  background: #009999 !important;
+  color: #ffffff;
+  border: solid #009999;
   cursor:pointer;
   -webkit-border-radius: 5px;
   border-radius: 5px;

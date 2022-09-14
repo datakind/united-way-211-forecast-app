@@ -44,6 +44,7 @@ def index():
             filename = secure_filename(file.filename)
             save_location = os.path.join(UPLOAD_FOLDER, filename)
             file.save(save_location)
+            socketio.emit('uploadcomplete')
     else:
         session['number'] = str(uuid4())
     return render_template('index.html', async_mode=socketio.async_mode), 200
@@ -163,5 +164,7 @@ def test_disconnect():
 if __name__ == "__main__":
     # app.run(host="127.0.0.1", port=5000, threaded=True)
     # socketio.run(app,host="127.0.0.1", port=5000, threaded=True)
-    app.run(host="0.0.0.0", port=5000, threaded=True)
-    socketio.run(app,host="0.0.0.0", port=5000, threaded=True)
+    # app.run(host="0.0.0.0", port=5000, threaded=True)
+    # socketio.run(app,host="0.0.0.0", port=5000, threaded=True)
+    app.run(host="0.0.0.0", port=os.environ.get("PORT"), threaded=True)
+    socketio.run(app,host="0.0.0.0", port=os.environ.get("PORT"), threaded=True)
