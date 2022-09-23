@@ -11,4 +11,4 @@ RUN apt-get update && apt-get install git -y && pip install --upgrade pip && pip
 
 COPY . /app
 
-CMD ["starter/start.sh"]
+CMD ["python","starter/start.py"]
