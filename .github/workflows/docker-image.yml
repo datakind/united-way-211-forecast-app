@@ -43,6 +43,7 @@ jobs:
     - name: Build image and push to Docker Hub and GitHub Container Registry
       uses: docker/build-push-action@v2
       with:
+        file: "Dockerhubfile"
         # Note: tags has to be all lower-case
         tags: |
           datakind/united-way-211-forecast-app:latest
