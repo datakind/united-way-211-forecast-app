@@ -1,3 +1,3 @@
-from subprocess import run
+from subprocess import Popen
 import os
-run("gunicorn -k eventlet -w 3 app:app -b 0.0.0.0:"+os.environ.get("PORT"))
+Popen(["gunicorn", "-k", "eventlet", "-w", "3", "app:app", "-b", "0.0.0.0:"+os.environ.get("PORT")],shell=False,bufsize=1)
