@@ -11,4 +11,5 @@ RUN apt-get update && apt-get install git -y && pip install --upgrade pip && pip
 
 COPY . /app
 
-CMD ["python","starter/start.py"]
+# CMD ["python","starter/start.py"]
+CMD ["gunicorn", "-k", "eventlet", "-w", "3", "app:app", "-b", "0.0.0.0:'$PORT'"]
