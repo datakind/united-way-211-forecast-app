@@ -23,6 +23,9 @@ jobs:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web 
     
+    - name: Add git to build for gunicorn clone
+      run:
+        sudo apt-get install git-all
     -
       name: Set up QEMU
       uses: docker/setup-qemu-action@v2
