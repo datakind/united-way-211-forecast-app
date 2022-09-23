@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 
 COPY requirements.txt requirements.txt
 
-RUN apt-get update && pip install --upgrade pip && pip install -r requirements.txt \
+RUN apt-get update && apt-get install git -y && pip install --upgrade pip && pip install -r requirements.txt \
 && rm -rf /var/cache/apk/*
 
 COPY . /app
