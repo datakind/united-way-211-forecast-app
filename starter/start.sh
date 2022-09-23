@@ -1,0 +1,1 @@
+python -m gunicorn -k eventlet -w 1 app:app -b 0.0.0.0:5000

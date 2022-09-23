@@ -141,7 +141,7 @@
                 loadicon = document.createElement("div")
                 loadicon.classList.add("dots-bars-4")
                 loadicon.setAttribute("id","loadiconid")
-                loadicon.style.cssText += 'float: left;'
+                loadicon.style.cssText += 'margin-left: auto;margin-right: auto;'
                 loadtimegui.appendChild(loadtimetext)
                 loadtimegui.appendChild(loadicon)
                 return false;
