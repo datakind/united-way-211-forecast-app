@@ -9,6 +9,8 @@ COPY requirements.txt requirements.txt
 RUN apt-get update && apt-get install git -y && pip install --upgrade pip && pip install -r requirements.txt \
 && rm -rf /var/cache/apk/*
 
+RUN splunk-py-trace-bootstrap
+
 COPY . /app
 
-CMD gunicorn -k eventlet -w 1 app:app -b 0.0.0.0:$PORT
+CMD splunk-py-trace gunicorn -k eventlet -w 1 app:app -b 0.0.0.0:$PORT
