@@ -19,11 +19,7 @@ jobs:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: 
         |
-        export OTEL_SERVICE_NAME="uw211forecast"
-        export SPLUNK_ACCESS_TOKEN=${{ secrets.SPLUNK_ACCESS_TOKEN }}
-        export OTEL_TRACES_EXPORTER="jaeger-thrift-splunk"
-        export OTEL_EXPORTER_JAEGER_ENDPOINT="https://ingest.us1.signalfx.com/v2/trace"
-        export OTEL_RESOURCE_ATTRIBUTES='deployment.environment=production'
+        sed -i 's/<SPLUNK_A_T>/'${{ secrets.SPLUNK_ACCESS_TOKEN }}'/' Dockerfile
         export DOCKER_DEFAULT_PLATFORM=linux/amd64
         heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web 
     - name: Release

@@ -3,6 +3,11 @@ FROM python:3.9.13-slim-buster
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV OTEL_SERVICE_NAME="uw211forecast"
+ENV SPLUNK_ACCESS_TOKEN=<SPLUNK_A_T>
+ENV OTEL_TRACES_EXPORTER="jaeger-thrift-splunk"
+ENV OTEL_EXPORTER_JAEGER_ENDPOINT="https://ingest.us1.signalfx.com/v2/trace"
+ENV OTEL_RESOURCE_ATTRIBUTES='deployment.environment=production'
 
 COPY requirements.txt requirements.txt
 
