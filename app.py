@@ -15,6 +15,26 @@ import subprocess
 from uuid import uuid4
 import csv
 import json
+import random
+from transitions import Machine, State
+
+# Setting State (Still learning)
+class Webstate(object):
+    def curerntlyactive(self): print("currently active")
+    def curentlyidle(self): print("currently idle!")
+
+webcheck = Webstate()
+webtransitions = [
+    {'trigger':'webactive','source':'idle','dest':'active'},
+    {'trigger':'webidle','source':'active','dest':'idle'},
+]
+machine = Machine(model=webcheck, states=[{
+                                            'name':'idle',
+                                            'on_exit':['curerntlyactive']}, 
+                                            {'name':'active',
+                                            'on_exit':['curentlyidle']}], initial='idle',
+                                            transitions=webtransitions)
+
 
 # Setting Variables
 app = Flask(__name__,static_folder="static/",template_folder="templates/")
@@ -38,6 +58,7 @@ def index():
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
+            webcheck.webactive()
             UPLOAD_FOLDER = os.path.join(path, 'upload',session['number'])
             if not os.path.isdir(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
@@ -45,6 +66,7 @@ def index():
             save_location = os.path.join(UPLOAD_FOLDER, filename)
             file.save(save_location)
             socketio.emit('uploadcomplete')
+            webcheck.webidle()
     else:
         session['number'] = str(uuid4())
     return render_template('index.html', async_mode=socketio.async_mode), 200
@@ -66,6 +88,7 @@ def killdata():
 # The websocket that starts the run.py prediction model
 @socketio.event
 def run_forecast():
+    webcheck.webactive()
     config_fn = './src/config.yaml'
 
     # Creating the upload folder
@@ -114,6 +137,7 @@ def run_forecast():
                         Line number: "+ str(line_number)+"<br>"
                         emit('logForcast',{"loginfo": str(reason)+ "<br>"})
                         print(str(reason))
+                        webcheck.webidle()
 
             # getting the csv data and sending it to the client browser
             csvlistdata = []
@@ -129,6 +153,7 @@ def run_forecast():
             with open(forecast_fn, 'rb') as f:
                 image_data = f.read()
             emit('forcastphoto',{"loginfo": image_data})
+            webcheck.webidle()
             # Unfortionately, I don't think subprocess popen can pull a return value like this to get
             # The attribute of figs... You may need to think about how to pipe
             # Your variables to the app since Popen is only used to run commands. 
@@ -153,6 +178,8 @@ def run_forecast():
             Line number: "+ str(line_number)+"<br>"
 
             emit('logForcast',{"loginfo": str(reason)+ "<br>"})
+            webcheck.webidle()
+
 
 
 
