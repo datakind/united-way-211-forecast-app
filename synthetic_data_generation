@@ -1,0 +1,71 @@
+from pandas.core.dtypes.cast import date
+import pandas as pd
+import numpy as np
+#!pip install Faker
+from faker import Faker
+import datetime
+#from google.colab import  drive
+#drive.mount('/drive')
+
+
+# create some fake data
+Faker.seed(0)
+fake = Faker(0)
+np.random.seed(0)
+
+nrecords = 30000 # number of records to generate
+
+# function to create a datastructure with fake values for our phone call data
+def make_phone_record(num):
+    # lists to randomly assign to caller data
+    zip_list = ['11111', '22222', '33333']
+    """inside the code, services are mapped to higer level categories,
+    so the services we put here should be relatively 'granular'.
+    Additionally, inside the code, there are specific 3 large level categories
+    on which preducitons are made. They are Housing, Utility Assistance and
+    Food/Meal. So, we need to make sure we include at least one low-level
+    from each of these categories
+    """
+    referred_services_list = ['Electric Service Payment Assistance', 
+                              'Rent Payment Assistance', 
+                              'Food Pantries', 
+                              'Housing Search Assistance', 
+                              'Work Clothing']
+
+    fake_records = [{'Search_Option_County': 'My County',
+                     'zip': np.random.choice(zip_list),
+                     'Transaction_ID': np.random.randint(1, 10000000),
+                     'Transaction_ID_Count': 1,
+                     'Contact_Start_Time': fake.time(),
+                     'Contact_Start_Time_Count': 1,
+                      # ensure dates are between 2019-07-01 and 2021-12-31
+                     'Contact_Start_Date':fake.date_between_dates(date_start=datetime.date(2021,1,1), date_end=datetime.date(2023,1,1)), 
+                     'Referred_Services': np.random.choice(referred_services_list)
+                     }]
+    # convert date to appropriate format, i.e. mm-dd-yyyy
+    fake_records[0]['Contact_Start_Date'] = fake_records[0]['Contact_Start_Date'].strftime("%m/%d/%Y")
+
+    return fake_records
+
+
+phone_records_df = pd.DataFrame(make_phone_record(num=1))
+
+i = 1
+while i < nrecords:
+    phone_records_df = phone_records_df.append(pd.DataFrame(make_phone_record(num=1)))
+    i += 1
+
+# make sure titles are a match to the original csv file
+phone_records_df.columns = ['Search Option - County', 
+              'zip', 
+              'Transaction ID', 
+              'Transaction ID Count', 
+              'Contact Start Time',
+              'Contact Start Time Count',
+              'Contact Start Date',
+              'Referred Services']
+print(phone_records_df.head(3))
+#store data in a csv file
+#CHANGE PATH NAME IF NOT WORKING IN GOOGLE COLAB TO RUN THE CODE
+phone_records_df.to_csv('/drive/My Drive/Colab Notebooks/synthetic_phone_records_out.csv', index=False)
+print("Program finished running")
